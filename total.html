@@ -1,0 +1,71 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Google Sheetsを可視化</title>
+<script src="googleSheets.js"></script>
+
+<!-- 1. ここにP5.jsを読み込む -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.7.2/p5.min.js"></script>
+
+<!-- 2.以下にsetup関数とdraw関数を定義 -->
+<script>
+  
+let i,j　= 0;
+let sheet = false;
+  
+function setup() {
+  createCanvas(800, 800, WEBGL);
+  ambientLight(125, 125, 125);
+  directionalLight(255, 255, 255, 1, 1, 1);
+  pointLight(255, 255, 255, 0, 0, 800);
+  noStroke();
+  background(0);
+}
+
+function cube(x,y,z,w,h,d) {  
+  push();
+  translate(x,y,z);
+  box(w,h,d);
+  pop();
+}    
+    
+function draw() {
+  orbitControl();
+  background(0);
+  for (let i=0;i<12;i++) {
+    for (let j=0;j<13;j++) {
+      if (sheet) {
+        specularMaterial(i*20,sheet[i][j],j*20);
+        cube(i*60-300,-sheet[i][j]/2,j*60-300,50,sheet[i][j],50);
+      }　else {
+        specularMaterial(200,200,200);
+        cube(i*30-200,0,j*30-300,50,1,50);
+      }
+    }
+  }
+}
+
+async function loaddata () {
+  let data = await loadSheets('s1316249!B8:N20');
+  sheet = data.values;
+}
+  
+window.onload = function () {
+  let dom = document.querySelector("#mybtn");
+  dom.onclick = loaddata;
+}
+
+</script>
+</head>
+<body>
+    <h1>24年~28年一世帯当たりの食費</h1>
+<button id="mybtn">食費データ</button>
+<div id="contents"></div>
+<script async defer src="https://apis.google.com/js/api.js"
+  onload="this.onload=function(){};handleClientLoad()"
+  onreadystatechange="if (this.readyState === 'complete') this.onload()">
+</script>
+</body>
+</html>
